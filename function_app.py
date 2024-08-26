@@ -1,5 +1,6 @@
 import azure.functions as func
 import logging
+import json
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -22,4 +23,22 @@ def clear(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(
              "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
              status_code=200
+        )
+
+@app.route(route="remove_background", auth_level=func.AuthLevel.ANONYMOUS)
+def remove_background(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Python HTTP trigger function processed a request.')
+
+    blob_name = req.params.get('blob_name')
+    if not blob_name:
+        return func.HttpResponse(
+            json.dumps({'error': 'No blob name provided'}),
+             status_code=400,
+             mimetype='application/json'
+        )
+
+    return func.HttpResponse(
+             json.dumps({'resp': 'Ok'}),
+             status_code=200,
+             mimetype='application/json'
         )
